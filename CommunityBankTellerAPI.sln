@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityBankTellerAPI", "CommunityBankTellerAPI.csproj", "{7D9483DD-E0F3-4FE6-B330-5D26EFF82BAC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7D9483DD-E0F3-4FE6-B330-5D26EFF82BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D9483DD-E0F3-4FE6-B330-5D26EFF82BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D9483DD-E0F3-4FE6-B330-5D26EFF82BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D9483DD-E0F3-4FE6-B330-5D26EFF82BAC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52BE141C-1C47-4F49-9DBF-E63985709BDA}
+	EndGlobalSection
+EndGlobal

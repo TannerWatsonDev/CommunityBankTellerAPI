@@ -1,0 +1,6 @@
+@CommunityBankTellerAPI_HostAddress = http://localhost:5160
+
+GET {{CommunityBankTellerAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
