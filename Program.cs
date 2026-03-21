@@ -1,6 +1,8 @@
-
 using CommunityBankTellerAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using CommunityBankTellerAPI.Services;
+using CommunityBankTellerAPI.Services.Interfaces;
+using System.Reflection;
 
 namespace CommunityBankTellerAPI
 {
@@ -15,11 +17,17 @@ namespace CommunityBankTellerAPI
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
-
             builder.Services.AddControllers();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            // Configure Swagger to include XML comments for better documentation
+            builder.Services.AddSwaggerGen(options =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+            });
 
             var app = builder.Build();
 
