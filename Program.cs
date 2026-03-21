@@ -1,4 +1,7 @@
 
+using CommunityBankTellerAPI.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace CommunityBankTellerAPI
 {
     public class Program
@@ -6,6 +9,10 @@ namespace CommunityBankTellerAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Configure services and database context
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
 
