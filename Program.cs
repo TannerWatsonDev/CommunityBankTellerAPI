@@ -17,8 +17,15 @@ namespace CommunityBankTellerAPI
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                });
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             // Configure Swagger to include XML comments for better documentation

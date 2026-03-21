@@ -134,8 +134,8 @@ https://localhost:{port}/swagger
 - [x] Docker Compose with PostgreSQL
 - [x] Initial database migration
 - [ ] DTOs (request/response objects)
-- [ ] Customer endpoints
-- [ ] Account endpoints
+- [x] Customer endpoints
+- [x] Account endpoints
 - [ ] Transaction endpoints with business rule enforcement
 - [ ] Ledger endpoints
 - [ ] Unit tests
