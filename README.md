@@ -136,7 +136,7 @@ https://localhost:{port}/swagger
 - [ ] DTOs (request/response objects)
 - [x] Customer endpoints
 - [x] Account endpoints
-- [ ] Transaction endpoints with business rule enforcement
+- [x] Transaction endpoints with business rule enforcement
 - [ ] Ledger endpoints
 - [ ] Unit tests
 - [ ] Integration tests
