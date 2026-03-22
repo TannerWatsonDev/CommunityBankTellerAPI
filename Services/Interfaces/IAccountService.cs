@@ -9,5 +9,6 @@ namespace CommunityBankTellerAPI.Services.Interfaces
         Task<AccountResponse> GetAccountByIdAsync(int accountId);
 
         Task<AccountResponse> CloseAccountByIdAsync(int accountId);
+        Task<IEnumerable<AccountResponse>> GetAccountsByCustomerIdAsync(int customerId);
     }
 }

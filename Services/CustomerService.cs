@@ -1,18 +1,19 @@
-﻿using CommunityBankTellerAPI.Data;
-using CommunityBankTellerAPI.DTOs;
+﻿using CommunityBankTellerAPI.DTOs;
 using CommunityBankTellerAPI.Models;
+using CommunityBankTellerAPI.Repositories.Interfaces;
 using CommunityBankTellerAPI.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace CommunityBankTellerAPI.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly AppDbContext _context;
+        // Dependency on the database context for data access
+        private readonly ICustomerRepository _customerRepository;
 
-        public CustomerService(AppDbContext context)
+        // Constructor with dependency injection of the customer repository
+        public CustomerService(ICustomerRepository customerRepository)
         {
-            _context = context;
+            _customerRepository = customerRepository;
         }
 
 
@@ -26,8 +27,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<CustomerResponse> CreateCustomerAsync(CreateCustomerRequest request)
         {
             // check if email exists
-            var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.Email == request.Email);
+            var existingCustomer = await _customerRepository.GetByEmailAsync(request.Email);
             if (existingCustomer != null)
             {
                 throw new InvalidOperationException("A customer with this email already exists.");
@@ -47,8 +47,7 @@ namespace CommunityBankTellerAPI.Services
             };
 
             // Save to Database
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            await _customerRepository.AddAsync(customer);
 
             // Map to Response DTO and return
             return new CustomerResponse
@@ -67,43 +66,6 @@ namespace CommunityBankTellerAPI.Services
         }
 
         /// <summary>
-        /// Asynchronously retrieves all accounts associated with the specified customer identifier.
-        /// </summary>
-        /// <param name="customerId">The unique identifier of the customer whose accounts are to be retrieved. Must correspond to an existing
-        /// customer.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains a collection of account
-        /// responses for the specified customer. The collection is empty if the customer has no accounts.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown if no customer with the specified identifier exists.</exception>
-        public async Task<IEnumerable<AccountResponse>> GetAccountsByCustomerIdAsync(int customerId)
-        {
-            // validate if customer exists
-            var existingCustomer = await _context.Customers
-                .FirstOrDefaultAsync(c => c.Id == customerId);
-            if (existingCustomer == null)
-            {
-                throw new KeyNotFoundException("A customer with this email already exists.");
-            }
-
-            // Retrieve accounts for the customer
-            var accounts = await _context.Accounts
-                .Where(a => a.CustomerId == customerId)
-                .Select(a => new AccountResponse
-                {
-                    Id = a.Id,
-                    AccountNumber = a.AccountNumber,
-                    Type = a.Type,
-                    Status = a.Status,
-                    Balance = a.Balance,
-                    CreatedAt = a.CreatedAt,
-                    ClosedAt = a.ClosedAt,
-                    CustomerId = a.CustomerId
-                })
-                .ToListAsync();
-            return accounts;
-        }
-
-
-        /// <summary>
         /// Asynchronously retrieves a customer by their unique identifier.
         /// </summary>
         /// <param name="id">The unique identifier of the customer to retrieve. Must be a valid customer ID.</param>
@@ -113,7 +75,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<CustomerResponse> GetCustomerByIdAsync(int id)
         {
             // Validate that the customer exists
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _customerRepository.GetByIdAsync(id);
             if (customer == null)
             {
                 throw new KeyNotFoundException("Customer not found.");
@@ -149,7 +111,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<CustomerResponse> UpdateCustomerAsync(int id, UpdateCustomerRequest request)
         {
             // validate that the customer exists
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _customerRepository.GetByIdAsync(id);
             if (customer == null)
             {
                 throw new KeyNotFoundException("Customer not found.");
@@ -177,7 +139,7 @@ namespace CommunityBankTellerAPI.Services
             customer.UpdatedAt = DateTime.UtcNow;
 
             // Save changes to database
-            await _context.SaveChangesAsync();
+            await _customerRepository.UpdateAsync(customer);
 
             // Map to Response DTO and return
             return new CustomerResponse

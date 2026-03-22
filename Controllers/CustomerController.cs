@@ -9,10 +9,12 @@ namespace CommunityBankTellerAPI.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly IAccountService _accountService;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService, IAccountService accountService)
         {
             _customerService = customerService;
+            _accountService = accountService;
         }
 
 
@@ -98,7 +100,6 @@ namespace CommunityBankTellerAPI.Controllers
         }
 
 
-
         [HttpGet("{id}/accounts")]
         [EndpointName("GetAccountsByCustomerId")]
         public async Task<ActionResult<IEnumerable<AccountResponse>>> GetAccountsByCustomerId(int id)
@@ -106,7 +107,7 @@ namespace CommunityBankTellerAPI.Controllers
             try
             {
                 // Create a variable to hold the list of accounts returned by the service
-                var response = await _customerService.GetAccountsByCustomerIdAsync(id);
+                var response = await _accountService.GetAccountsByCustomerIdAsync(id);
                 // Return a 200 OK response with the list of accounts
                 return Ok(response);
             }

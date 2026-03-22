@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using CommunityBankTellerAPI.Services;
 using CommunityBankTellerAPI.Services.Interfaces;
 using System.Reflection;
+using CommunityBankTellerAPI.Repositories.Interfaces;
+using CommunityBankTellerAPI.Repositories;
 
 namespace CommunityBankTellerAPI
 {
@@ -24,6 +26,10 @@ namespace CommunityBankTellerAPI
                 });
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

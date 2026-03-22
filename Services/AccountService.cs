@@ -1,18 +1,21 @@
-﻿using CommunityBankTellerAPI.Data;
-using CommunityBankTellerAPI.DTOs;
+﻿using CommunityBankTellerAPI.DTOs;
 using CommunityBankTellerAPI.Models;
+using CommunityBankTellerAPI.Repositories.Interfaces;
 using CommunityBankTellerAPI.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace CommunityBankTellerAPI.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly AppDbContext _context;
+        // private variable for database context through DAL
+        private readonly IAccountRepository _accountRepository;
+        private readonly ICustomerRepository _customerRepository;
 
-        public AccountService(AppDbContext context)
+        // constructor to inject the database context
+        public AccountService(IAccountRepository accountRepository, ICustomerRepository customerRepository)
         {
-            _context = context;
+            _accountRepository = accountRepository;
+            _customerRepository = customerRepository;
         }
 
 
@@ -28,7 +31,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<AccountResponse> CreateAccountAsync(CreateAccountRequest request)
         {
             // validate customer exists
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == request.CustomerId);
+            var customer = await _customerRepository.GetByIdAsync(request.CustomerId);
             if (customer == null)
             {
                 throw new KeyNotFoundException($"Customer with ID {request.CustomerId} not found.");
@@ -47,13 +50,13 @@ namespace CommunityBankTellerAPI.Services
             };
 
             // add and save to database
-            _context.Accounts.Add(account);
-            await _context.SaveChangesAsync();
+            await _accountRepository.AddAsync(account);
+
 
             // generate unique account number (e.g. "ACC" + zero-padded account ID)
             account.AccountNumber = $"ACC{account.Id:D8}";
             // update account with generated account number
-            await _context.SaveChangesAsync();
+            await _accountRepository.UpdateAsync(account);
 
             // map to response DTO
             return new AccountResponse
@@ -80,7 +83,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<AccountResponse> GetAccountByIdAsync(int accountId)
         {
             // validate account exists
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+            var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null)
             {
                 throw new KeyNotFoundException($"Account with ID {accountId} not found.");
@@ -114,7 +117,7 @@ namespace CommunityBankTellerAPI.Services
         public async Task<AccountResponse> CloseAccountByIdAsync(int accountId)
         {
             // validate account exists and is open
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+            var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null)
             {
                 throw new KeyNotFoundException($"Account with ID {accountId} not found.");
@@ -128,7 +131,7 @@ namespace CommunityBankTellerAPI.Services
             account.Status = AccountStatus.Closed;
             account.ClosedAt = DateTime.UtcNow;
 
-            await _context.SaveChangesAsync();
+            await _accountRepository.UpdateAsync(account);
 
             // map to response DTO
             return new AccountResponse
@@ -142,6 +145,38 @@ namespace CommunityBankTellerAPI.Services
                 ClosedAt = account.ClosedAt,
                 CustomerId = account.CustomerId
             };
+        }
+
+
+        /// <summary>
+        /// Asynchronously retrieves all accounts associated with the specified customer identifier.
+        /// </summary>
+        /// <param name="customerId">The unique identifier of the customer whose accounts are to be retrieved. Must correspond to an existing
+        /// customer.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a collection of account
+        /// responses for the specified customer. The collection is empty if the customer has no accounts.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if no customer with the specified identifier exists.</exception>
+        public async Task<IEnumerable<AccountResponse>> GetAccountsByCustomerIdAsync(int customerId)
+        {
+            var customer = await _customerRepository.GetByIdAsync(customerId);
+            if (customer == null)
+            {
+                throw new KeyNotFoundException($"Customer with ID {customerId} not found.");
+            }
+
+            var accounts = await _accountRepository.GetAccountsByCustomerIdAsync(customerId);
+
+            return accounts.Select(a => new AccountResponse
+            {
+                Id = a.Id,
+                AccountNumber = a.AccountNumber,
+                Type = a.Type,
+                Status = a.Status,
+                Balance = a.Balance,
+                CreatedAt = a.CreatedAt,
+                ClosedAt = a.ClosedAt,
+                CustomerId = a.CustomerId
+            });
         }
     }
 }

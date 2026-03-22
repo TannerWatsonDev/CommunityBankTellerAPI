@@ -8,6 +8,5 @@ namespace CommunityBankTellerAPI.Services.Interfaces
             Task<CustomerResponse> CreateCustomerAsync(CreateCustomerRequest request);
             Task<CustomerResponse> GetCustomerByIdAsync(int id);
             Task<CustomerResponse> UpdateCustomerAsync(int id, UpdateCustomerRequest request);
-            Task<IEnumerable<AccountResponse>> GetAccountsByCustomerIdAsync(int customerId);
     }
 }
