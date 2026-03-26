@@ -133,7 +133,7 @@ https://localhost:{port}/swagger
 - [x] AppDbContext with decimal precision and relationship configuration
 - [x] Docker Compose with PostgreSQL
 - [x] Initial database migration
-- [ ] DTOs (request/response objects)
+- [x] DTOs (request/response objects)
 - [x] Customer endpoints
 - [x] Account endpoints
 - [x] Transaction endpoints with business rule enforcement
