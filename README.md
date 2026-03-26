@@ -137,7 +137,7 @@ https://localhost:{port}/swagger
 - [x] Customer endpoints
 - [x] Account endpoints
 - [x] Transaction endpoints with business rule enforcement
-- [ ] Ledger endpoints
+- [x] Ledger endpoints
 - [ ] Unit tests
 - [ ] Integration tests
 - [ ] Global error handling middleware
