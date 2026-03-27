@@ -5,6 +5,7 @@ using CommunityBankTellerAPI.Services.Interfaces;
 using System.Reflection;
 using CommunityBankTellerAPI.Repositories.Interfaces;
 using CommunityBankTellerAPI.Repositories;
+using CommunityBankTellerAPI.Middleware;
 
 namespace CommunityBankTellerAPI
 {
@@ -37,8 +38,6 @@ namespace CommunityBankTellerAPI
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<ILedgerService, LedgerService>();
-            
-
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +51,9 @@ namespace CommunityBankTellerAPI
 
             var app = builder.Build();
 
+            // middleware must be first to catch all unhandled exceptions
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -62,10 +64,7 @@ namespace CommunityBankTellerAPI
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
-
             app.MapControllers();
-
             app.Run();
         }
     }
