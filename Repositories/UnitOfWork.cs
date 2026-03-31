@@ -1,5 +1,6 @@
 ﻿using CommunityBankTellerAPI.Data;
 using CommunityBankTellerAPI.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CommunityBankTellerAPI.Repositories

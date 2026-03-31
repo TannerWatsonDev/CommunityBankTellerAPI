@@ -9,15 +9,18 @@ using CommunityBankTellerAPI.Middleware;
 
 namespace CommunityBankTellerAPI
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Configure services and database context
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            if (!builder.Environment.IsEnvironment("Testing"))
+            {
+                builder.Services.AddDbContext<AppDbContext>(options =>
+                    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             // Add services to the container.
             builder.Services.AddControllers()
